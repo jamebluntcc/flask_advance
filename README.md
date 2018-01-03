@@ -77,7 +77,7 @@ if __name__ == '__main__':
 	ctx = app.app_context()
 	ctx.push()
 	print _app_ctx_stack.top
-	print _app_ctx_stack.top = ctx
+	print _app_ctx_stack.top is ctx
 	print current_app
 	ctx.pop()
 	print current_app

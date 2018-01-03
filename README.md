@@ -120,7 +120,7 @@ request = LocalProxy(partial(_lookup_req_object, 'request'))
 - errorhandle：errorhandle 接受状态码，可以自定义返回这种状态码的响应处理方法。
 - template_filter：在使用`jinja2`模板的时候可以方便的注册过滤器。
 
-接下来在 code 中的 [app_with_local_proxy.py](https://github.com/jamebluntcc/flask_advance/code/app_with_local_proxy.py) 可以看到演示代码，如何使用`LocalProxy` 代替 `flask.g`。其中 get_current_user 返回`LocalStack`的栈对象，然后使用`LocalProxy`进行代理，结果返回一个应用上下文对象，在应用上下文以及请求上下文中被作为全局变量使用。
+接下来在 code 中的 [app_with_local_proxy.py](https://github.com/jamebluntcc/flask_advance/) 可以看到演示代码，如何使用`LocalProxy` 代替 `flask.g`。其中 get_current_user 返回`LocalStack`的栈对象，然后使用`LocalProxy`进行代理，结果返回一个应用上下文对象，在应用上下文以及请求上下文中被作为全局变量使用。
 
 
 ### flask url

@@ -103,3 +103,7 @@ ENV/
 # pycharm
 
 .idea/
+
+# dev db
+
+code/dev.db

@@ -63,6 +63,26 @@ print mydata.number  # 12  # 主线程没有改变
 
 这两种上下文对象都定义在 `flask.ctx` 中，它们的用法是推入 `flask.globals` 中创建的 `_app_ctx_stack`和`_request_ctx_stack`这两个实例化的 `Local Stack`对象。
 
+```python
+from flask import Flask, current_app
+from flask.globals import _app_ctx_stack, _request_ctx_stack
+app = Flask(__name__)
+
+if __name__ == '__main__':
+	print _app_ctx_stack.top
+	print _request_ctx_stack.top
+	print _app_ctx_stack()
+	print current_app
+	# 推入 app context
+	ctx = app.app_context()
+	ctx.push()
+	print _app_ctx_stack.top
+	print _app_ctx_stack.top = ctx
+	print current_app
+	ctx.pop()
+	print current_app
+```
+
 需要注意的是当使用 `app = Flask(__name__)` 构造出一个 `Flask App` 时，并不会被自动推入 Stack，所以此时的 Local Stack 的栈顶是空的， `current_app` 也是 unbound 状态。
 
 所以在离线脚本中连接数据库的时候，当我们使用 `Flask-SQLalchemy` 写成的 Model 上调用 `User.query.get(user_id)` 就会立即出现 `RuntimeError`。因为此时的 `App Context` 还没有被推入栈中，而 Flask-SQLalchemy 需要做数据库连接的时候取访问 `current_app.config` current_app 指向的却是 `_app_ctx_stack` 为空的栈顶。所以一般要先将 App 的 APP Context 推入栈中，栈顶不为空后 `current_app` 这个 LocalProxy 对象就很自然的取得 config 属性转发到当前 APP 上。 
@@ -100,7 +120,7 @@ request = LocalProxy(partial(_lookup_req_object, 'request'))
 - errorhandle：errorhandle 接受状态码，可以自定义返回这种状态码的响应处理方法。
 - template_filter：在使用`jinja2`模板的时候可以方便的注册过滤器。
 
-接下来在 code 中的 [app_with_local_proxy.py](https://github.com/jamebluntcc/flask_advance)可以看到演示代码。
+接下来在 code 中的 [app_with_local_proxy.py](https://github.com/jamebluntcc/flask_advance) 可以看到演示代码，如何使用`LocalProxy` 代替 `flask.g`。其中 get_current_user 返回`LocalStack`的栈对象，然后使用`LocalProxy`进行代理，结果返回一个应用上下文对象，在应用上下文以及请求上下文中被作为全局变量使用。
 
 
 ### flask url
